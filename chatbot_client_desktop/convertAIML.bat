@@ -1,0 +1,1 @@
+java -cp Ab.jar Main bot=Andre action=aiml2csv trace=false
