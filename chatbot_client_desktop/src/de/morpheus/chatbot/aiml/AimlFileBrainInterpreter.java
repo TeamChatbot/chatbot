@@ -30,6 +30,7 @@ public class AimlFileBrainInterpreter implements IAIMLFileInterpreter {
 				content.setDate(new Date());
 				content.setValue(value);
 				returnValue.get(category).get(key).add(content);
+				//jo
 			}
 			
 		}
