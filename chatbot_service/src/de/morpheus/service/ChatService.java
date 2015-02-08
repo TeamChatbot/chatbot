@@ -7,12 +7,13 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import de.morpheus.chatbot.base.Chatbot;
+
+import de.morpheus.chatbot.model.BotInit;
 
 @Path("/chat")
 public class ChatService {
 	
-	private Chatbot chatbot = new Chatbot();
+	private BotInit chatbot = new BotInit();
 	
 	@GET
 	@Path("alive")
