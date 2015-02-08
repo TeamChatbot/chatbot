@@ -16,12 +16,12 @@ import de.morpheus.chatbot.extension.ExtensionChatbotRandomTopic;
 import de.morpheus.chatbot.extension.ExtensionChatbotRandomValueOfTopic;
 import de.morpheus.chatbot.extension.ExtensionCurrentDate;
 import de.morpheus.chatbot.extension.ExtensionIsKnown;
+import de.morpheus.chatbot.model.BotInit;
 import de.morpheus.chatbot.model.brain.ModelChatbotBrain;
 
 public class ConsoleBot {
 	
-	private Bot bot;
-	private Chat chatSession;
+	private BotInit bot;
 	
 	public static void main(String[] args) throws IOException{
 		ConsoleBot bot = new ConsoleBot(
@@ -35,12 +35,9 @@ public class ConsoleBot {
 		bot.startConversation();
 	}
 	
-	public ConsoleBot() {
-		this.init();
-	}
 	
 	public ConsoleBot(AIMLProcessorExtension... extensions) {
-		this();
+		this.bot= new BotInit();
 		AIMLProcessor.extension = AIMLExtensionHub.createFromExtensions(extensions);	
 	}
 	
@@ -52,7 +49,7 @@ public class ConsoleBot {
 //				silenceTimer.start(chatSession);
 				String input = reader.readLine();
 //				silenceTimer.cancel();
-				String response = processInput(input);
+				String response = bot.processInput(input);
 				System.out.println(response);
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -60,17 +57,6 @@ public class ConsoleBot {
 		}
 	}
 
-	private void init() {
-		this.bot 			= new Bot(ModelChatbotBrain.BOT_NAME, "C:\\");
-		this.chatSession 	= new Chat(bot);
-		
-	}
-
-	public String processInput(String input) throws IllegalStateException {
-		if(bot == null){
-			throw new IllegalStateException("Bot hasn't been initialized yet!");
-		}
-		return chatSession.multisentenceRespond(input);
-	}
+	
 	
 }
