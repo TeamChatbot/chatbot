@@ -10,7 +10,6 @@ import org.alicebot.ab.Utilities;
 import org.w3c.dom.Node;
 
 import de.morpheus.chatbot.model.brain.ModelChatbotBrain;
-import de.morpheus.chatbot.model.brain.ModelChatbotBrainContent;
 import de.morpheus.chatbot.utility.UtilityAIML;
 
 public class ExtensionChatbotBrainSetAndGet implements AIMLProcessorExtension  {
@@ -54,13 +53,10 @@ public class ExtensionChatbotBrainSetAndGet implements AIMLProcessorExtension  {
 		String topic = UtilityAIML.getAttributeOrTagValue(node, ps, "topic");
 		String category = UtilityAIML.getAttributeOrTagValue(node, ps, "category");
 		Boolean multiple = (Boolean.valueOf(UtilityAIML.getAttributeOrTagValue(node, ps, "multiple")));
-		value = value.trim();
-		ModelChatbotBrainContent modelChatbotBrainContent = new ModelChatbotBrainContent();
-		modelChatbotBrainContent.add(topic, value, multiple);
 		ModelChatbotBrain.getInstance().add(category, topic, value, multiple);
 		ps.topic = String.format(ExtensionChatbotRandomTopic.SMALLTALK_TOPIC_PATTERN, category, topic);
 		ps.chatSession.predicates.put("topic", ps.topic);
-		ModelChatbotBrain.getInstance().getDatasource().write(category, modelChatbotBrainContent);
+		ModelChatbotBrain.getInstance().getDatasource().writeAll(ModelChatbotBrain.getInstance());
 		LAST_SELECTED_VALUE = value.trim();
 		return "";
 	}
