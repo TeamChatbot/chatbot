@@ -1,12 +1,15 @@
 package de.morpheus.chatbot.service;
 
 import javax.jws.*;
-import de.morpheus.chatbot.base.Chatbot;
 
+
+
+
+import de.morpheus.chatbot.model.BotInit;
 @WebService
 public class ChatbotService {
-	
-	private Chatbot chatbot = new Chatbot();
+
+	private BotInit chatbot = new BotInit();
 	
 	@WebMethod
 	public String communicate(String input) {
