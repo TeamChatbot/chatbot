@@ -16,9 +16,11 @@ public class ModelChatbotBrainContent extends HashMap<String, List<String>>{
 			if(multiple){
 				this.get(key).add(value);
 			}else{
+				this.get(key).clear();
 				this.get(key).add(0,value);	
 			}
 		}
+		this.multiple=multiple;
 	}
 	
 	public Boolean hasValue(String topic, String text){

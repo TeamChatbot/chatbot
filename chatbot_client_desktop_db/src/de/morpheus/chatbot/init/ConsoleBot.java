@@ -9,6 +9,7 @@ import org.alicebot.ab.AIMLProcessorExtension;
 import org.alicebot.ab.Bot;
 import org.alicebot.ab.Chat;
 
+import de.morpheus.chatbot.brain.io.datasource.DataSourceDB;
 import de.morpheus.chatbot.brain.io.datasource.DataSourceFile;
 import de.morpheus.chatbot.extension.AIMLExtensionHub;
 import de.morpheus.chatbot.extension.ExtensionChatbotBrainSetAndGet;
@@ -31,7 +32,7 @@ public class ConsoleBot {
 				new ExtensionCurrentDate(),
 				new ExtensionIsKnown()
 		);
-		ModelChatbotBrain.getInstance().init(new DataSourceFile());
+		ModelChatbotBrain.getInstance().init(new DataSourceDB());
 		bot.startConversation();
 	}
 	

@@ -29,6 +29,73 @@ public class DataSourceDB implements DataSource
 {
 
 
+	@SuppressWarnings("finally")
+	public Connection con()
+	{
+		String host1 ="jdbc:oracle:thin:@McDaulyChillung:1521:xe";
+		String username ="Steve";
+		String password = "sys";
+		Connection con = null;
+		try{
+		con = DriverManager.getConnection( host1, username, password );
+		return con;
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			return con;
+		}
+	}
+	
+	@SuppressWarnings("finally")
+	public ResultSet selectstatement(String s1)
+	{
+		Connection con=con();
+		ResultSet result = null;
+		try
+		{	
+			Statement stmt = con.createStatement();
+			 result = stmt.executeQuery(s1);
+			return result;
+		}
+		catch(SQLException e)
+		{
+			
+		}
+		finally
+		{
+			return result;
+		}
+		
+	}
+	
+	@SuppressWarnings("finally")
+	public int UpdateStatement(String s1)
+	{
+		Connection con=con();
+		int result=0;
+		try
+		{	
+			Statement stmt = con.createStatement();
+			 result = stmt.executeUpdate(s1);
+			return result;
+		}
+		catch(SQLException e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			return result;
+		}
+	
+		
+		
+	}
+	
 	
 		public ModelChatbotBrain readAll() 
 		{
@@ -36,34 +103,31 @@ public class DataSourceDB implements DataSource
 			//Model chatbot brain zurück geben, = Hashmap
 			//Hashmap key= Kategorie; Value = Hashmap(key Topic, value Wert)
 			
-			String host1 ="jdbc:oracle:thin:@McDaulyChillung:1521:xe";
-			String username ="Steve";
-			String password = "sys";
 
-			Connection con;
 			ModelChatbotBrain returnValue = ModelChatbotBrain.getInstance();
 			try {
-				con = DriverManager.getConnection( host1, username, password );
 				
-				System.out.println("yo");
+			
+				String Query1 = "SELECT distinct(Kategoriename)from brain join kategorie on brain.BRAINKATEGORIEID =kategorie.KATEGORIEID";
+				ResultSet rsdistinct=selectstatement(Query1);
 				
-				Statement stmt = con.createStatement();
-				ResultSet rsdistinct = stmt.executeQuery("SELECT distinct(Kategoriename)from brain join kategorie on brain.BRAINKATEGORIEID =kategorie.KATEGORIEID");
+				
 				ArrayList<String> kategorielist = new ArrayList<String>();
 			
 				while (rsdistinct.next())
 				{
 				System.out.println(rsdistinct.getString(1));
 			kategorielist.add(rsdistinct.getString(1));
+			
 				}
 				
 					System.out.println(kategorielist.size()-1);
 					for(int i = 0;i<= kategorielist.size()-1;i++)
 					{
 					
-					String Query1="SELECT Kategoriename,braintopic,brainvalue from brain join kategorie on brain.BRAINKATEGORIEID =kategorie.KATEGORIEID where Kategoriename='"+kategorielist.get(i)+"'";
-				    System.out.println(Query1);
-				    ResultSet rs = stmt.executeQuery(Query1);
+					String Query2="SELECT Kategoriename,braintopic,brainvalue from brain join kategorie on brain.BRAINKATEGORIEID =kategorie.KATEGORIEID where Kategoriename='"+kategorielist.get(i)+"'";				  
+				    ResultSet rs = selectstatement(Query2);
+				  
 				    returnValue.clear();
 				
 				while ( rs.next() ) {
@@ -111,34 +175,137 @@ public class DataSourceDB implements DataSource
 			
 			
 			
-			String host1 ="jdbc:oracle:thin:@McDaulyChillung:1521:xe";
-			String username ="Steve";
-			String password = "sys";
+		
 			Connection con;
 			try{
-			
-				
-			con = DriverManager.getConnection( host1, username, password );
-					
-			
-			
-			//DB-Verbindung hier -------
-			//schreibt kategorie->topic-> value  in eine file .. jede Kateogorie ein file
-			
-			
+							
+			con=con();
+			//für jede Kategorie schleife
 			for(Entry<String, ModelChatbotBrainContent> currentEntry : brainModel.entrySet()){
 				String category = currentEntry.getKey();	
+	
+				//für jedes topic,value in der Kategorie
+				
+				System.out.println(category);
+				
+				//check if category existiert
+				String existskategorie ="Select count(*) from Kategorie where Kategoriename ='"+category+"' ";
+				ResultSet rsexistskategorie = selectstatement(existskategorie);
+				int katexists=1;
+				if(rsexistskategorie.next())
+				{
+					 katexists =rsexistskategorie.getInt(1);
+					System.out.println(katexists);
+				}
+				if (katexists==0)
+				{
+					//anlegen der kategorie
+					String InsertKategorie = "Insert into Kategorie(Kategoriename)values('"+category+"') ";
+					int Ok = UpdateStatement(InsertKategorie);
+				}
+				
+				
+				String preselectString="Select Kategorieid from Kategorie where Kategoriename ='"+category+"'";
+				ResultSet Preresult = selectstatement(preselectString);
+				
+				//schreiben der KategorieID in answerid
+				String answerid;
+				if (Preresult.next())
+				{
+				answerid= Preresult.getString(1);
+				System.out.println(answerid);
+				}
+				else
+				{
+					answerid="";
+					System.out.println("leer");
+				}	
 			
+				
+				
+				
 				for(Map.Entry<String, List<String>> currentModelCategory : currentEntry.getValue().entrySet()){
 						for(String currentContent : currentModelCategory.getValue()){
 							String topic = currentModelCategory.getKey();
 							String value = currentContent;
-							String abfrage = "Insert Into Brain(Brainkategorieid,Braintopic,Brainvalue)values((Select Kategorieid from Kategorie where Kategoriename ='"+category+"' ),'"+topic+"','"+value+"') ";
-							System.out.println(abfrage);
-							Statement stmt = con.createStatement();
-							ResultSet rsdistinct = stmt.executeQuery("abfrage");
+							boolean multiple=brainModel.get(topic).isMultiple();
 							
-							//-------SQL STatement----------
+							//insert Kategorie
+							String topicexists ="Select count(*) from Topic where topic ='"+topic+"'";
+							ResultSet rstopicexists =selectstatement(topicexists);
+							int rtopicexists=1;
+							if(rstopicexists.next())
+							{
+								rtopicexists=rstopicexists.getInt(1);
+							}
+							if (rtopicexists==0)
+							{
+								String createtopic="insert into Topic (Topic,KategorieID,Multiple)";
+							}
+							
+							
+							//check if multiple true false
+							String multiplecheck = "select multiple from topic where topic ='"+topic+"'";
+							ResultSet rsmultiplecheck =selectstatement(multiplecheck);
+							int multi=0; //bessre lösung andre fragen
+							
+							if(rsmultiplecheck.next())
+							{
+								multi= rsmultiplecheck.getInt(1);
+							}
+							
+							//check if topic + value already in der Datenbank ->
+							String braincheck = "select count(*) from Brain where BrainTopic ='"+topic+"' and Brainvalue='"+value+"'";
+							ResultSet rsbraincheck =selectstatement(braincheck);
+							int braincount= 0; //bessere lösung andre fragen
+							if (rsbraincheck.next())
+							{
+							braincount= rsbraincheck.getInt(1);
+								System.out.println(braincount);
+							}
+							//check if topic +  already in der Datenbank 
+							String topiccheck ="select count(*)from brain where BrainTopic='"+topic+"'";
+							ResultSet rstopiccheck =selectstatement(topiccheck);
+							int topiccount=0;
+							if(rstopiccheck.next())
+							{
+								topiccount=rstopiccheck.getInt(1);
+							}
+							
+							//überschreiben oder anlegen
+							
+							if(multi==1  )
+							{
+								//wenn topic+value nicht vorhanden == 0 dann insert
+								if(braincount==0){
+								String abfrage = "INSERT INTO BRAIN (Brainkategorieid, Braintopic, Brainvalue) VALUES ("+answerid+", '"+topic+"', '"+value+"')";
+								
+								int ok = UpdateStatement(abfrage);
+								System.out.println(ok);
+								}
+							}
+							
+							
+							else if (multi==0)
+							{
+								//wenn topic vorhanden, übeschreibe Wert
+								if(topiccount>0)
+								{
+									//update
+									String Updatevalue="Update Brain set Brainvalue ='"+value+"' where Braintopic='"+topic+"'";
+									int ok = UpdateStatement(Updatevalue);
+											
+								}
+								else if (topiccount==0)
+								{
+									String InsertValue="Insert Into Brain (Brainkategorieid, Braintopic, Brainvalue) VALUES ("+answerid+", '"+topic+"', '"+value+"')";
+									int OK= UpdateStatement(InsertValue);
+								}
+								}
+							
+							
+							
+							
 							
 						}
 					}
@@ -148,7 +315,7 @@ public class DataSourceDB implements DataSource
 			}
 			catch(SQLException e) 
 			{
-				
+				System.out.println(e);
 			}
 			}
 		

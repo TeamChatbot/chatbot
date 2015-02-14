@@ -8,7 +8,7 @@ import de.morpheus.chatbot.exception.ExceptionInvalidDataModel;
 
 public class ModelChatbotBrain extends LinkedHashMap<String, ModelChatbotBrainContent> {
 
-	public static final String BOT_NAME = "Leonard";
+	public static final String BOT_NAME = "Andre";
 	
 	private static ModelChatbotBrain modelChatbotBrain = new ModelChatbotBrain();
 	

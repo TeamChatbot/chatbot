@@ -18,7 +18,7 @@ import de.morpheus.chatbot.model.brain.ModelChatbotBrainContent;
 
 public class DataSourceFile implements DataSource {
 
-	public static final Path 	DEFAULTPATH 			= Paths.get(System.getProperty("java.class.path").split(File.pathSeparator)[0], "..");
+	public static final Path 	DEFAULTPATH 			= Paths.get("C:\\");
 	public static final String 	BRAIN_FILE_EXTENSION 	= "brain";
 	public static final Path 	BRAIN_FILE_DIRECTORY 	= Paths.get(DEFAULTPATH.toString(), "bots", ModelChatbotBrain.BOT_NAME, "brain");
 	
