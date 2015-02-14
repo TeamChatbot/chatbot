@@ -1,29 +1,17 @@
 package de.morpheus.chatbot.brain.io.datasource;
 
-import de.morpheus.chatbot.model.brain.ModelChatbotBrain;
-import de.morpheus.chatbot.model.brain.ModelChatbotBrainContent;
-
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.Map.Entry;
 
-import de.morpheus.chatbot.brain.io.file.brain.BufferedFileReader;
-import de.morpheus.chatbot.interpreter.InterpreterBrain;
 import de.morpheus.chatbot.model.brain.ModelChatbotBrain;
 import de.morpheus.chatbot.model.brain.ModelChatbotBrainContent;
+import de.morpheus.chatbot.model.brain.ModelChatbotBrainTopic;
 
 public class DataSourceDB implements DataSource
 {
@@ -100,7 +88,7 @@ public class DataSourceDB implements DataSource
 		public ModelChatbotBrain readAll() 
 		{
 			// daten aus Datenbank lesen
-			//Model chatbot brain zurück geben, = Hashmap
+			//Model chatbot brain zurï¿½ck geben, = Hashmap
 			//Hashmap key= Kategorie; Value = Hashmap(key Topic, value Wert)
 			
 
@@ -141,11 +129,11 @@ public class DataSourceDB implements DataSource
 
 		      		
 		      		if(!returnValue.containsKey(category)){
-						ModelChatbotBrainContent innerArrayList = new ModelChatbotBrainContent();
+						ModelChatbotBrainTopic innerArrayList = new ModelChatbotBrainTopic();
 						returnValue.put(category, innerArrayList);
 					}
 					if(!returnValue.get(category).containsKey(key)){
-						returnValue.get(category).put(key, new ArrayList<String>());
+						returnValue.get(category).put(key, new ModelChatbotBrainContent());
 					}
 					content = value;
 					returnValue.get(category).get(key).add(content);
@@ -180,11 +168,11 @@ public class DataSourceDB implements DataSource
 			try{
 							
 			con=con();
-			//für jede Kategorie schleife
-			for(Entry<String, ModelChatbotBrainContent> currentEntry : brainModel.entrySet()){
+			//fï¿½r jede Kategorie schleife
+			for(Entry<String, ModelChatbotBrainTopic> currentEntry : brainModel.entrySet()){
 				String category = currentEntry.getKey();	
 	
-				//für jedes topic,value in der Kategorie
+				//fï¿½r jedes topic,value in der Kategorie
 				
 				System.out.println(category);
 				
@@ -224,11 +212,12 @@ public class DataSourceDB implements DataSource
 				
 				
 				
-				for(Map.Entry<String, List<String>> currentModelCategory : currentEntry.getValue().entrySet()){
+				for(Map.Entry<String, ModelChatbotBrainContent> currentModelCategory : currentEntry.getValue().entrySet()){
 						for(String currentContent : currentModelCategory.getValue()){
 							String topic = currentModelCategory.getKey();
 							String value = currentContent;
-							boolean multiple=brainModel.get(topic).isMultiple();
+							
+							boolean multiple=brainModel.get(category).get(topic).isMultiple();
 							
 							//insert Kategorie
 							String topicexists ="Select count(*) from Topic where topic ='"+topic+"'";
@@ -247,7 +236,7 @@ public class DataSourceDB implements DataSource
 							//check if multiple true false
 							String multiplecheck = "select multiple from topic where topic ='"+topic+"'";
 							ResultSet rsmultiplecheck =selectstatement(multiplecheck);
-							int multi=0; //bessre lösung andre fragen
+							int multi=0; //bessre lï¿½sung andre fragen
 							
 							if(rsmultiplecheck.next())
 							{
@@ -257,7 +246,7 @@ public class DataSourceDB implements DataSource
 							//check if topic + value already in der Datenbank ->
 							String braincheck = "select count(*) from Brain where BrainTopic ='"+topic+"' and Brainvalue='"+value+"'";
 							ResultSet rsbraincheck =selectstatement(braincheck);
-							int braincount= 0; //bessere lösung andre fragen
+							int braincount= 0; //bessere lï¿½sung andre fragen
 							if (rsbraincheck.next())
 							{
 							braincount= rsbraincheck.getInt(1);
@@ -272,7 +261,7 @@ public class DataSourceDB implements DataSource
 								topiccount=rstopiccheck.getInt(1);
 							}
 							
-							//überschreiben oder anlegen
+							//ï¿½berschreiben oder anlegen
 							
 							if(multi==1  )
 							{
@@ -288,7 +277,7 @@ public class DataSourceDB implements DataSource
 							
 							else if (multi==0)
 							{
-								//wenn topic vorhanden, übeschreibe Wert
+								//wenn topic vorhanden, ï¿½beschreibe Wert
 								if(topiccount>0)
 								{
 									//update
@@ -322,7 +311,7 @@ public class DataSourceDB implements DataSource
 		
 	
 	
-	public void write(String category, ModelChatbotBrainContent obj) 
+	public void write(String category, ModelChatbotBrainTopic obj) 
 	{
 		
 	}

@@ -6,7 +6,7 @@ import java.util.List;
 import de.morpheus.chatbot.brain.io.datasource.DataSource;
 import de.morpheus.chatbot.exception.ExceptionInvalidDataModel;
 
-public class ModelChatbotBrain extends LinkedHashMap<String, ModelChatbotBrainContent> {
+public class ModelChatbotBrain extends LinkedHashMap<String, ModelChatbotBrainTopic> {
 
 	public static final String BOT_NAME = "Andre";
 	
@@ -32,7 +32,7 @@ public class ModelChatbotBrain extends LinkedHashMap<String, ModelChatbotBrainCo
 	}
 	
 	public void add(String category, String key, String value, Boolean multiple){
-		ModelChatbotBrainContent lst = new ModelChatbotBrainContent();
+		ModelChatbotBrainTopic lst = new ModelChatbotBrainTopic();
 		String content = new String(value.trim());
 		if(!super.containsKey(category)){
 			super.put(category, lst);
@@ -43,7 +43,7 @@ public class ModelChatbotBrain extends LinkedHashMap<String, ModelChatbotBrainCo
 	
 	public List<String> get(String category, String key){
 		if(!super.containsKey(category)){
-			ModelChatbotBrainContent lst = new ModelChatbotBrainContent();
+			ModelChatbotBrainTopic lst = new ModelChatbotBrainTopic();
 			super.put(category, lst);
 		}
 		return super.get(category).get(key);

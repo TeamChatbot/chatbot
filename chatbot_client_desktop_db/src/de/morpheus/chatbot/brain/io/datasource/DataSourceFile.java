@@ -7,7 +7,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -15,6 +14,7 @@ import de.morpheus.chatbot.brain.io.file.brain.BufferedFileReader;
 import de.morpheus.chatbot.interpreter.InterpreterBrain;
 import de.morpheus.chatbot.model.brain.ModelChatbotBrain;
 import de.morpheus.chatbot.model.brain.ModelChatbotBrainContent;
+import de.morpheus.chatbot.model.brain.ModelChatbotBrainTopic;
 
 public class DataSourceFile implements DataSource {
 
@@ -43,7 +43,7 @@ public class DataSourceFile implements DataSource {
 	@Override
 	public void writeAll(ModelChatbotBrain brainModel) {
 		BufferedWriter bufferedWriter = null;
-		for(Entry<String, ModelChatbotBrainContent> currentEntry : brainModel.entrySet()){
+		for(Entry<String, ModelChatbotBrainTopic> currentEntry : brainModel.entrySet()){
 			String category = currentEntry.getKey();
 			File file = this.getPathToBrainFileByCategory(category).toFile();
 			try{
@@ -51,7 +51,7 @@ public class DataSourceFile implements DataSource {
 					file.createNewFile();
 				}
 				bufferedWriter = new BufferedWriter(new FileWriter(file));
-				for(Map.Entry<String, List<String>> currentModelCategory : currentEntry.getValue().entrySet()){
+				for(Map.Entry<String, ModelChatbotBrainContent> currentModelCategory : currentEntry.getValue().entrySet()){
 					for(String currentContent : currentModelCategory.getValue()){
 						bufferedWriter.write(currentModelCategory.getKey() + ":" + currentContent);
 						bufferedWriter.newLine();
@@ -73,7 +73,7 @@ public class DataSourceFile implements DataSource {
 	}
 
 	@Override
-	public void write(String category, ModelChatbotBrainContent obj) {
+	public void write(String category, ModelChatbotBrainTopic obj) {
 		
 	}
 	
