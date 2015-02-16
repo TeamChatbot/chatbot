@@ -16,6 +16,7 @@ public class ModelChatbotBrainTopic extends HashMap<String, ModelChatbotBrainCon
 				this.get(key).add(0,value);	
 			}
 		}
+		this.get(key).setMultiple(multiple);
 	}
 	
 	public Boolean hasValue(String topic, String text){
