@@ -197,15 +197,15 @@ public class DataSourceDB implements DataSource
 				ResultSet Preresult = selectstatement(preselectString);
 				
 				//schreiben der KategorieID in answerid
-				String answerid;
+				Integer answerid;
 				if (Preresult.next())
 				{
-				answerid= Preresult.getString(1);
+				answerid= Preresult.getInt(1);
 				System.out.println(answerid);
 				}
 				else
 				{
-					answerid="";
+					answerid=null;
 					System.out.println("leer");
 				}	
 			
@@ -218,6 +218,15 @@ public class DataSourceDB implements DataSource
 							String value = currentContent;
 							
 							boolean multiple=brainModel.get(category).get(topic).isMultiple();
+							Integer Intmultiple;
+							if (multiple==false)
+							{
+								Intmultiple = 0;
+							}
+							else
+							{
+								Intmultiple =1;
+							}
 							
 							//insert Kategorie
 							String topicexists ="Select count(*) from Topic where topic ='"+topic+"'";
@@ -229,7 +238,9 @@ public class DataSourceDB implements DataSource
 							}
 							if (rtopicexists==0)
 							{
-								String createtopic="insert into Topic (Topic,KategorieID,Multiple)";
+								String createtopic="insert into Topic (Topic,KategorieID,Multiple) values('"+topic+"','"+answerid+"','"+Intmultiple+"')";
+								int ok= UpdateStatement(createtopic);
+								System.out.println(ok);
 							}
 							
 							
