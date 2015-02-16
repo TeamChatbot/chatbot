@@ -1,1 +1,1 @@
-java -cp Ab.jar Main bot=Andre action=aiml2csv trace=false
+java -cp C:\Users\steffen\workspace\chatbot_client_desktop_db\lib\Ab.jar Main bot=Andre action=aiml2csv trace=false
