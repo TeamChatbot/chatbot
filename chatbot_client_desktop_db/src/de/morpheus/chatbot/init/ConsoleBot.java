@@ -32,14 +32,14 @@ public class ConsoleBot {
 				new ExtensionCurrentDate(),
 				new ExtensionIsKnown()
 		);
-		ModelChatbotBrain.getInstance().init(new DataSourceDB());
+	
 		bot.startConversation();
 	}
 	
 	
 	public ConsoleBot(AIMLProcessorExtension... extensions) {
-		this.bot= new BotInit();
-		AIMLProcessor.extension = AIMLExtensionHub.createFromExtensions(extensions);	
+		this.bot= new BotInit(new DataSourceDB(),extensions);
+		
 	}
 	
 	private void startConversation() {
