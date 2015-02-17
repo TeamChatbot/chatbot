@@ -25,20 +25,14 @@ public class ConsoleBot {
 	private BotInit bot;
 	
 	public static void main(String[] args) throws IOException{
-		ConsoleBot bot = new ConsoleBot(
-				new ExtensionChatbotBrainSetAndGet(),
-				new ExtensionChatbotRandomTopic(),
-				new ExtensionChatbotRandomValueOfTopic(),
-				new ExtensionCurrentDate(),
-				new ExtensionIsKnown()
-		);
+		ConsoleBot bot = new ConsoleBot();
 	
 		bot.startConversation();
 	}
 	
 	
-	public ConsoleBot(AIMLProcessorExtension... extensions) {
-		this.bot= new BotInit(new DataSourceDB(),extensions);
+	public ConsoleBot() {
+		this.bot= new BotInit(new DataSourceDB(),BotInit.DEFAULT_AIML_EXTENSIONS);
 		
 	}
 	
