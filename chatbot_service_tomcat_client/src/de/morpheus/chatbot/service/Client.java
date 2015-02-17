@@ -11,9 +11,6 @@ public class Client {
 	  {
 		  ChatbotServiceProxy service = new ChatbotServiceProxy();
 		  service.setEndpoint("http://194.95.221.229:8080/chatbot_service_tomcat/services/ChatbotService");
-		  
-	//	  System.setProperty("http.proxyHost", "");
-	//	  System.setProperty("http.proxyPort", "8080");
 
 	      byte buffer[] = new byte[80];
 	      String input = "";
