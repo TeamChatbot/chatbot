@@ -32,7 +32,7 @@ public class ConsoleBot {
 	
 	
 	public ConsoleBot() {
-		this.bot= new BotInit(new DataSourceDB(),BotInit.DEFAULT_AIML_EXTENSIONS);
+		this.bot= new BotInit(new DataSourceDB());
 		
 	}
 	

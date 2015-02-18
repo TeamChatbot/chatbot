@@ -20,7 +20,13 @@ public class DataSourceDB implements DataSource
 	@SuppressWarnings("finally")
 	public Connection con()
 	{
-		String host1 ="jdbc:oracle:thin:@McDaulyChillung:1521:xe";
+		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+		} catch (ClassNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}  
+		String host1 ="jdbc:oracle:thin:@VM-PROJ-852:1521:xe";
 		String username ="Steve";
 		String password = "sys";
 		Connection con = null;

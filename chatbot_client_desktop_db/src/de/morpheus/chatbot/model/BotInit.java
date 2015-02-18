@@ -28,9 +28,9 @@ public class BotInit {
 	private Chat chatSession;
 	
 	
-	public BotInit(DataSource datasource,AIMLProcessorExtension... extensions)
+	public BotInit(DataSource datasource)
 	{
-		this.init(datasource,extensions);
+		this.init(datasource,DEFAULT_AIML_EXTENSIONS);
 		
 	}
 
