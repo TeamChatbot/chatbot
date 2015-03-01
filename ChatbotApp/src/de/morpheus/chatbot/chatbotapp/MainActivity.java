@@ -1,60 +1,67 @@
 package de.morpheus.chatbot.chatbotapp;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
+import android.os.StrictMode;
+import android.view.View;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
-import java.util.ArrayList;
 
+public class MainActivity extends Activity {
 
-public class MainActivity extends ListeningActivity {
+	private Intent recognitionService = null;
+	protected static ToggleButton turnRecognitionOnOff;
+	protected static ProgressBar speechInputLevel;
+	protected static TextView speechOutput;
+	protected static TextView chatbotAnswer;
 
-	private RelativeLayout content;
-	private TextView output;
-	
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
 		
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_main);
+		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+		
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
         
-        content = (RelativeLayout)findViewById(R.id.content);
-        output = (TextView)findViewById(R.id.commands);
-        context = getApplicationContext();
-        
-        SpeechRecognitionListener.getListenerInstance().setListener(this);
-        startListening();
+        turnRecognitionOnOff = (ToggleButton) findViewById(R.id.turnRecognitionOnOff);
+		speechOutput = (TextView) findViewById(R.id.speechOutput);
+		chatbotAnswer = (TextView) findViewById(R.id.chatbotAnswer);
+		speechInputLevel = (ProgressBar) findViewById(R.id.speechInputLevel);
+		speechInputLevel.setVisibility(View.VISIBLE);
+		
+		recognitionService = new Intent(this, RecognitionService.class);
+		
+		turnRecognitionOnOff.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			 
+			 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+			 
+				 if (isChecked) {
+					 startService(recognitionService);
+				 } 
+				 else {
+					 speechInputLevel.setProgress(-2);
+					 stopService(recognitionService);
+				 }
+			 }
+		});
 	}
 	
-	public void processSpeechCommands(ArrayList<String> recognitionResult) {
-		
-        content.removeAllViews();
-
-        for(String s : recognitionResult)
-            output.setText(s);
+	public void onResume() {
+		super.onResume();	
 	}
-
-	public void restartSpeechRecognitionListener() {
-		
-		
+	
+	protected void onPause() {
+		super.onPause();
 	}
-
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
-
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
+	
+    protected void onDestroy(){
+        super.onDestroy();
+    }
 }
