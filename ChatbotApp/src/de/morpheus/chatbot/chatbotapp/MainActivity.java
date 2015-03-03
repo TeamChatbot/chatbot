@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ProgressBar;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -20,6 +21,8 @@ public class MainActivity extends Activity {
 	protected static ProgressBar speechInputLevel;
 	protected static TextView speechOutput;
 	protected static TextView chatbotAnswer;
+	protected static boolean onListeningForName = false;
+	
 
 	public void onCreate(Bundle savedInstanceState) {
 		
@@ -46,11 +49,15 @@ public class MainActivity extends Activity {
 					 startService(recognitionService);
 				 } 
 				 else {
-					 speechInputLevel.setProgress(-2);
 					 stopService(recognitionService);
+					 speechInputLevel.setProgress(-2);
 				 }
 			 }
 		});
+	}
+	
+	public void onListeningForName(View view) {
+		onListeningForName = ((Switch) view).isChecked();
 	}
 	
 	public void onResume() {
@@ -62,6 +69,7 @@ public class MainActivity extends Activity {
 	}
 	
     protected void onDestroy(){
+    	
         super.onDestroy();
     }
 }
