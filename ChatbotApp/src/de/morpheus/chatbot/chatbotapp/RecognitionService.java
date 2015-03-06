@@ -146,6 +146,7 @@ public class RecognitionService extends Service implements RecognitionListener{
 	public void doExecution(String input) {
 
 		messageFromChatbot = webService.sendMessageToChatbot(input);
+	
 		Log.i(LOG_TAG, "ChatbotService successful called");
 		
 		MainActivity.speechOutput.setText(input);

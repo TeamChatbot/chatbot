@@ -13,7 +13,7 @@ public class WebService {
     private final String URL = "http://194.95.221.229:8080/chatbot_service_tomcat/services/ChatbotService?wsdl";
     private final String SOAP_ACTION = "http://service.chatbot.morpheus.de/communicate";
     private final String METHODNAME = "communicate";
-    private final int TIMEOUT = 2000;
+    private final int TIMEOUT = 1500;
     private SoapObject request;
     private HttpTransportSE http;
     private String result;
@@ -32,7 +32,7 @@ public class WebService {
         try {
             http.call(SOAP_ACTION, envelope);
             SoapPrimitive response = (SoapPrimitive)envelope.getResponse();
-            result = response.toString();
+            result= String.valueOf(response.toString());
         }
 
         catch(Exception e) {
