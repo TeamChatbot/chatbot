@@ -1,5 +1,6 @@
 package de.morpheus.chatbot.chatbotapp;
 
+import java.io.EOFException;
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapPrimitive;
@@ -30,13 +31,24 @@ public class WebService {
         http.debug = true;
 
         try {
-            http.call(SOAP_ACTION, envelope);
-            SoapPrimitive response = (SoapPrimitive)envelope.getResponse();
-            result= String.valueOf(response.toString());
+        	
+            try {
+            	http.call(SOAP_ACTION, envelope);
+            }
+            catch(EOFException exception) {
+            	http.call(SOAP_ACTION, envelope);
+            }
+        	
+            try {
+                SoapPrimitive response = (SoapPrimitive)envelope.getResponse();
+                result= String.valueOf(response.toString());
+            }
+            catch(ClassCastException exception) {
+            	RecognitionService.callSuccessful = false;
+            }
         }
-
-        catch(Exception e) {
-            e.printStackTrace();
+        catch(Exception exception) {
+        	exception.printStackTrace();
         }
 
         return result;

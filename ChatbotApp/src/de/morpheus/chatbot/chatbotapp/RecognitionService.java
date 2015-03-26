@@ -29,6 +29,7 @@ public class RecognitionService extends Service implements RecognitionListener{
 	private TextToSpeech textToSpeech;
 	private CharSequence name = "alice";
 	private CharSequence xname = "Alice";
+	protected static boolean callSuccessful = false;
     
 	public IBinder onBind(Intent intent) {
 		return null;
@@ -108,6 +109,7 @@ public class RecognitionService extends Service implements RecognitionListener{
 
 	public void onResults(Bundle results) {
 		
+		callSuccessful = true;
 		Log.i(LOG_TAG, "onResults");
 		speechRecognizer.cancel();
 		ArrayList<String> text = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
@@ -142,38 +144,46 @@ public class RecognitionService extends Service implements RecognitionListener{
 		}
 	}
 	
-	@SuppressWarnings("deprecation")
 	public void doExecution(String input) {
 
 		messageFromChatbot = webService.sendMessageToChatbot(input);
 	
-		Log.i(LOG_TAG, "ChatbotService successful called");
+		if(callSuccessful == true) {
+			
+			Log.i(LOG_TAG, "ChatbotService successful called");
+			
+			MainActivity.speechOutput.setText(input);
+			MainActivity.chatbotAnswer.setText(messageFromChatbot);
+			
+			audioManager.setStreamMute(AudioManager.STREAM_MUSIC, false);
+			Log.i(LOG_TAG, "Device unmuted");
+			
+	        if(textToSpeech!=null) {
+	            if(messageFromChatbot!=null) {
+	                if (!textToSpeech.isSpeaking()) {
+	                	CharSequence toSpeak = messageFromChatbot;
+	                    textToSpeech.speak(toSpeak.toString(), TextToSpeech.QUEUE_FLUSH, null);
+	                    Log.i(LOG_TAG, "textToSpeech");
+	                }
+	            }
+	            else {
+	            	MainActivity.chatbotAnswer.setText("Request to Chatbot WebService failed");
+	            }
+	        }
+			
+	        while(textToSpeech.isSpeaking()) {
+	        	
+	        }
+	        audioManager.setStreamMute(AudioManager.STREAM_MUSIC, true);
+			Log.i(LOG_TAG, "Device muted");
+	        speechRecognizer.startListening(speechRecognizerIntent);
+		}
 		
-		MainActivity.speechOutput.setText(input);
-		MainActivity.chatbotAnswer.setText(messageFromChatbot);
-		
-		audioManager.setStreamMute(AudioManager.STREAM_MUSIC, false);
-		Log.i(LOG_TAG, "Device unmuted");
-		
-        if(textToSpeech!=null) {
-            if(messageFromChatbot!=null) {
-                if (!textToSpeech.isSpeaking()) {
-                	CharSequence toSpeak = messageFromChatbot;
-                    textToSpeech.speak(toSpeak.toString(), TextToSpeech.QUEUE_FLUSH, null);
-                    Log.i(LOG_TAG, "textToSpeech");
-                }
-            }
-            else {
-            	MainActivity.chatbotAnswer.setText("Request to Chatbot WebService failed");
-            }
-        }
-		
-        while(textToSpeech.isSpeaking()) {
-        	
-        }
-        audioManager.setStreamMute(AudioManager.STREAM_MUSIC, true);
-		Log.i(LOG_TAG, "Device muted");
-        speechRecognizer.startListening(speechRecognizerIntent);
+		else {
+			MainActivity.speechOutput.setText(input);
+			MainActivity.chatbotAnswer.setText("Chatbot returned NULL");
+			speechRecognizer.startListening(speechRecognizerIntent);
+		}
 	}
 
 	public void onPartialResults(Bundle partialResults) {
